@@ -1,0 +1,72 @@
+<html>
+
+<head>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<link rel="stylesheet" href="style.css" />
+	<script>
+		function formatTime(d){
+			return `${('0'+parseInt(d)).slice(-2)}`
+		}
+
+		function CalculateWeekendDays(fromDate, toDate){
+			var weekendDayCount = 0;
+
+			while(fromDate <= toDate){
+				console.log(fromDate, fromDate.getDay())
+				if(fromDate.getDay() === 0 || fromDate.getDay() === 6){
+					++weekendDayCount ;
+				}
+				fromDate.setDate(fromDate.getDate() + 1);
+			}
+
+			return weekendDayCount ;
+		}
+
+		function calculate () {
+			// get total seconds between the times
+			const date_future = new Date(2022, 9, 14, 18, 0, 0)
+			const date_now = new Date()
+			const isPast = date_future < date_now
+			let delta = Math.abs(date_future - date_now) / 1000;
+			
+			// calculate (and subtract) whole days
+			const days = Math.floor(delta / 86400);
+			delta -= days * 86400;
+			
+			// calculate (and subtract) whole hours
+			const hours = Math.floor(delta / 3600) % 24;
+			delta -= hours * 3600;
+			
+			// calculate (and subtract) whole minutes
+			const minutes = Math.floor(delta / 60) % 60;
+			delta -= minutes * 60;
+			
+			// what's left is seconds
+			const seconds = delta % 60; 
+			
+			const wdays = days - CalculateWeekendDays(date_now, date_future)
+			if (isPast){
+				$('.wrapper_black').html('<h1 class="banner">Time is over</h1>')
+			} else {
+				$('#days').html(days)
+				$('#wdays').html(wdays)
+				$('#hours').html(`and ${formatTime(hours)}:${formatTime(minutes)}:${formatTime(seconds)} hours`)
+			}
+
+		}
+		setInterval(calculate, 1000)
+	</script>
+</head>
+<body class="wrapper_black">
+	<div class="plate">
+		<p class="script"><span>time left</span></p>
+		<p class="shadow text1">days</p>
+		<p class="shadow text2" id="days"></p>
+		<p class="shadow text3" id="hours"></p>
+		<p class="script"><span>to freedom</span></p>
+	</div>
+	<div class="shadow text1">
+		btw, workingdays are just <span id="wdays"></span>
+	</div>
+</body>
+</html>
